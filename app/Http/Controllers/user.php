@@ -35,8 +35,13 @@ class user extends Controller
     {
         $data = $request->json()->all();
         $create = new users();
+        $create->user = $data['user'];
         $create->name = $data['name'];
+        $create->lastname = $data['lastname'];
         $create->email = $data['email'];
+        $create->phone = $data['phone'];
+        $create->age = $data['age'];
+        $create->used = $data['used'];
         $create->password = $data['password'];
         $create->save();
         
@@ -47,10 +52,14 @@ class user extends Controller
 
         $data = $request->json()->all();
         $update = users::find($id);
+        $update->user = $data['user'];
         $update->name = $data['name'];
+        $update->lastname = $data['lastname'];
         $update->email = $data['email'];
+        $update->phone = $data['phone'];
+        $update->age = $data['age'];
+        $update->used = $data['used'];
         $update->password = $data['password'];
-
         $update->save();
         return response()->json($update, 201);
     }

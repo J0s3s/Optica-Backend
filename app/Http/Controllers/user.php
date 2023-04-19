@@ -35,7 +35,7 @@ class user extends Controller
     {
         $data = $request->json()->all();
         $create = new users();
-        $create->user = $data['user'];
+        $create->usuario = $data['usuario'];
         $create->name = $data['name'];
         $create->lastname = $data['lastname'];
         $create->email = $data['email'];
@@ -52,7 +52,7 @@ class user extends Controller
 
         $data = $request->json()->all();
         $update = users::find($id);
-        $update->user = $data['user'];
+        $update->usuario = $data['usuario'];
         $update->name = $data['name'];
         $update->lastname = $data['lastname'];
         $update->email = $data['email'];

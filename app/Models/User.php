@@ -48,4 +48,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    protected $primaryKey ='email';
+    public $incrementing = false;
+    protected $keyType = 'string';
 }

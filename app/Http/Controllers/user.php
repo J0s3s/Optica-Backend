@@ -63,4 +63,19 @@ class user extends Controller
         $update->save();
         return response()->json($update, 201);
     }
+    public function login(Request $request){
+        $data = $request->json()->all();
+        $email= $data['email'];
+        $password = $data['password'];
+        $login=DB::table('users')
+        ->select('email','password')
+        ->where('email', $email)
+        ->where('password', $password)
+        ->get();
+        if ($login->isEmpty()) {
+            return response()->json(["message" => "El correo o la contraseña son incorrectos."],204);
+        } else {
+            return response()->json($login,200);
+        }
+    }
 }

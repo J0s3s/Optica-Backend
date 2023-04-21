@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::get('/users/all', [user::class, 'allUsers']);
 Route::get('/users/{id}', [user::class, 'users']);
+Route::post('/users/login', [user::class, 'login']);
 Route::delete('/users/{id}',[user::class, 'delete']);
 Route::post('/users/create',[user::class, 'create']);
 Route::put('/update/{id}', [user::class, 'update']);

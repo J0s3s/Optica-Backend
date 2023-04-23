@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use App\Models\users;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RecoverPassword;
 
 class user extends Controller
 {
@@ -34,6 +36,12 @@ class user extends Controller
     public function create(Request $request)
     {
         $data = $request->json()->all();
+        $email= $data['email'];
+        $check=DB::table('users')
+        ->select('id')
+        ->where('email', $email)
+        ->get();
+        if ($check->isEmpty()) {
         $create = new users();
         $create->usuario = $data['usuario'];
         $create->name = $data['name'];
@@ -44,8 +52,11 @@ class user extends Controller
         $create->used = $data['used'];
         $create->password = $data['password'];
         $create->save();
-        
         return response()->json($create, 201);
+        } else {
+            return response()->json(["message" => "El correo no esta registrado"],204);
+        }
+        
     }
     public function update(Request $request, $id)
     {
@@ -76,6 +87,22 @@ class user extends Controller
             return response()->json(["message" => "El correo o la contraseña son incorrectos."],204);
         } else {
             return response()->json($login,200);
+        }
+    }
+    public function forgotpass(Request $request){
+        $data = $request->json()->all();
+        $email=$data['email'];
+        $recover=DB::table('users')
+        ->select('password')
+        ->where('email', $email)
+        ->get();
+        
+        if ($recover->isEmpty()) {
+            return response()->json(["message" => "El correo no esta registrado"],204);
+        } else {
+            
+            Mail::to($email)->send(new RecoverPassword($recover));
+            return response()->json($email,200);
         }
     }
 }

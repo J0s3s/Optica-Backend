@@ -7,6 +7,9 @@ use DB;
 use App\Models\users;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\RecoverPassword;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Image;
+
 
 class user extends Controller
 {
@@ -51,12 +54,12 @@ class user extends Controller
         $create->age = $data['age'];
         $create->used = $data['used'];
         $create->password = $data['password'];
+        $create->foto = $data['foto'];
         $create->save();
         return response()->json($create, 201);
         } else {
-            return response()->json(["message" => "El correo no esta registrado"],204);
+            return response()->json(["message" => "El correo ya esta registrado"],204);
         }
-        
     }
     public function update(Request $request, $id)
     {
@@ -78,15 +81,28 @@ class user extends Controller
         $data = $request->json()->all();
         $email= $data['email'];
         $password = $data['password'];
-        $login=DB::table('users')
+        $check=DB::table('users')
+        ->select('foto')
+        ->where('email', $email)
+        ->where('password', $password)
+        ->get();
+        if($check->isEmpty()){
+            $login=DB::table('users')
         ->select('email','password')
         ->where('email', $email)
         ->where('password', $password)
         ->get();
+        }else{
+            $login=DB::table('users')
+        ->select('email','password','foto')
+        ->where('email', $email)
+        ->where('password', $password)
+        ->get();
+        }
         if ($login->isEmpty()) {
             return response()->json(["message" => "El correo o la contraseña son incorrectos."],204);
         } else {
-            return response()->json($login,200);
+            return response()->json($login);
         }
     }
     public function forgotpass(Request $request){
@@ -100,9 +116,11 @@ class user extends Controller
         if ($recover->isEmpty()) {
             return response()->json(["message" => "El correo no esta registrado"],204);
         } else {
-            
             Mail::to($email)->send(new RecoverPassword($recover));
             return response()->json($email,200);
         }
+    }
+        public function guardar(Request $request,$idUser){
+        
     }
 }
